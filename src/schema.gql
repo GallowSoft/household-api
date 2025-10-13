@@ -1,0 +1,213 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthSession {
+  accessToken: String!
+  expiresIn: Float!
+  refreshToken: String!
+  tokenType: String!
+  user: AuthUser!
+}
+
+type AuthUser {
+  createdAt: String
+  email: String!
+  emailConfirmedAt: String
+  id: String!
+  lastSignInAt: String
+  phone: String
+  phoneConfirmedAt: String
+  updatedAt: String
+}
+
+input CreateInventoryItemInput {
+  barcode: String
+  brand: String
+  category: String
+  costPerUnit: Float
+  currentQuantity: Float
+  description: String
+  expirationDate: DateTime
+  maximumQuantity: Float
+  minimumQuantity: Float
+  name: String!
+  purchaseDate: DateTime
+  storageLocation: String
+  unitOfMeasure: String
+}
+
+input CreateShoppingListItemInput {
+  inventoryItemId: ID!
+  notes: String
+  priority: Int
+  quantityNeeded: Float!
+}
+
+input CreateStoreInput {
+  address: String
+  description: String
+  name: String!
+  phone: String
+  website: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type InventoryItem {
+  barcode: String
+  brand: String
+  category: String
+  costPerUnit: Float
+  createdAt: DateTime!
+  createdBy: ID
+  creator: AuthUser
+  currentQuantity: Float!
+  description: String
+  expirationDate: DateTime
+  id: ID!
+  isActive: Boolean
+  maximumQuantity: Float
+  minimumQuantity: Float!
+  name: String!
+  purchaseDate: DateTime
+  storageLocation: String
+  unitOfMeasure: String!
+  updatedAt: DateTime!
+  updatedBy: ID
+  updater: AuthUser
+}
+
+type ItemPrice {
+  createdAt: DateTime!
+  id: ID!
+  inventoryItem: InventoryItem
+  inventoryItemId: ID!
+  isCurrent: Boolean!
+  lastUpdated: DateTime!
+  price: Float!
+  store: Store
+  storeId: ID!
+  unitOfMeasure: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input MarkPurchasedInput {
+  id: ID!
+  notes: String
+}
+
+type Mutation {
+  createInventoryItem(input: CreateInventoryItemInput!): InventoryItem!
+  createShoppingListItem(input: CreateShoppingListItemInput!): ShoppingListItem!
+  createStore(input: CreateStoreInput!): Store!
+  deleteInventoryItem(id: ID!): Boolean!
+  deleteShoppingListItem(id: ID!): Boolean!
+  login(input: LoginInput!): AuthSession!
+  logout: Boolean!
+  markPurchased(input: MarkPurchasedInput!): ShoppingListItem!
+  refreshToken(input: RefreshTokenInput!): AuthSession!
+  register(input: RegisterInput!): AuthSession!
+  updateInventoryItem(input: UpdateInventoryItemInput!): InventoryItem!
+  updateShoppingListItem(input: UpdateShoppingListItemInput!): ShoppingListItem!
+}
+
+type Query {
+  activeShoppingList: [ShoppingListItem!]!
+  cheapestPricesForShoppingList: [ItemPrice!]!
+  currentPricesForItem(inventoryItemId: ID!): [ItemPrice!]!
+  highPriorityShoppingList: [ShoppingListItem!]!
+  inventoryItem(id: ID!): InventoryItem
+  inventoryItems(category: String, isActive: Boolean, lowStock: Boolean): [InventoryItem!]!
+  inventoryItemsByCategory(category: String!): [InventoryItem!]!
+  itemPrice(id: ID!): ItemPrice
+  itemPrices(inventoryItemId: ID, isCurrent: Boolean, storeId: ID): [ItemPrice!]!
+  lowStockItems: [InventoryItem!]!
+  me: AuthUser!
+  myInventoryItems(category: String, isActive: Boolean): [InventoryItem!]!
+  myPurchasedItems(limit: Float = 20): [ShoppingListItem!]!
+  myShoppingList(isPurchased: Boolean): [ShoppingListItem!]!
+  recentlyAddedItems(limit: Float = 10): [ShoppingListItem!]!
+  recentlyUpdatedItems(limit: Float = 10): [InventoryItem!]!
+  shoppingList(isPurchased: Boolean, priority: Float): [ShoppingListItem!]!
+  shoppingListItem(id: ID!): ShoppingListItem
+  store(id: ID!): Store
+  stores(isActive: Boolean): [Store!]!
+}
+
+input RefreshTokenInput {
+  refreshToken: String!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  phone: String
+}
+
+type ShoppingListItem {
+  createdAt: DateTime!
+  createdBy: ID
+  creator: AuthUser
+  id: ID!
+  inventoryItem: InventoryItem
+  inventoryItemId: ID!
+  isPurchased: Boolean
+  notes: String
+  priority: Int!
+  purchasedAt: DateTime
+  purchasedBy: ID
+  purchaser: AuthUser
+  quantityNeeded: Float!
+  updatedAt: DateTime!
+  updatedBy: ID
+  updater: AuthUser
+}
+
+type Store {
+  address: String
+  createdAt: String!
+  createdBy: ID
+  creator: AuthUser
+  id: ID!
+  isActive: Boolean
+  name: String!
+  phone: String
+  updatedAt: String!
+  updatedBy: ID
+  updater: AuthUser
+  website: String
+}
+
+input UpdateInventoryItemInput {
+  barcode: String
+  brand: String
+  category: String
+  costPerUnit: Float
+  currentQuantity: Float
+  description: String
+  expirationDate: DateTime
+  id: ID!
+  isActive: Boolean
+  maximumQuantity: Float
+  minimumQuantity: Float
+  name: String
+  purchaseDate: DateTime
+  storageLocation: String
+  unitOfMeasure: String
+}
+
+input UpdateShoppingListItemInput {
+  id: ID!
+  isPurchased: Boolean
+  notes: String
+  priority: Int
+  quantityNeeded: Float
+}
