@@ -75,13 +75,13 @@ export class ShoppingListResolver {
       query = query.eq('priority', priority);
     }
     
-    const { data, error } = await query.order('priority', { ascending: false }).order('created_at', { ascending: true });
+    const { data, error } = await query.order('priority', { ascending: false }).order('created_at', { ascending: true }) as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch shopping list: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,
@@ -101,7 +101,7 @@ export class ShoppingListResolver {
         inventory_item:inventory_items(*),
       `)
       .eq('id', id)
-      .single();
+      .single() as { data: any; error: any };
     
     if (error) {
       if (error.code === 'PGRST116') {
@@ -140,7 +140,7 @@ export class ShoppingListResolver {
       throw new Error(`Failed to fetch active shopping list: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,
@@ -167,7 +167,7 @@ export class ShoppingListResolver {
       throw new Error(`Failed to fetch high priority shopping list: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,
@@ -199,7 +199,7 @@ export class ShoppingListResolver {
         *,
         inventory_item:inventory_items(*),
       `)
-      .single();
+      .single() as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to create shopping list item: ${error.message}`);
@@ -248,7 +248,7 @@ export class ShoppingListResolver {
         *,
         inventory_item:inventory_items(*),
       `)
-      .single();
+      .single() as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to update shopping list item: ${error.message}`);
@@ -288,7 +288,7 @@ export class ShoppingListResolver {
         *,
         inventory_item:inventory_items(*),
       `)
-      .single();
+      .single() as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to mark item as purchased: ${error.message}`);
@@ -346,13 +346,13 @@ export class ShoppingListResolver {
       query = query.eq('is_purchased', isPurchased);
     }
     
-    const { data, error } = await query.order('priority', { ascending: false }).order('created_at', { ascending: true });
+    const { data, error } = await query.order('priority', { ascending: false }).order('created_at', { ascending: true }) as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch my shopping list: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,
@@ -377,13 +377,13 @@ export class ShoppingListResolver {
       `)
       .eq('purchased_by', user.id)
       .order('purchased_at', { ascending: false })
-      .limit(limit || 20);
+      .limit(limit || 20) as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch my purchased items: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,
@@ -408,13 +408,13 @@ export class ShoppingListResolver {
       `)
       .eq('created_by', user.id)
       .order('created_at', { ascending: false })
-      .limit(limit || 10);
+      .limit(limit || 10) as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch recently added items: ${error.message}`);
     }
     
-    return data?.map(item => ({
+    return data?.map((item: any) => ({
       ...item,
       inventoryItem: item.inventory_item,
       createdBy: item.created_by,

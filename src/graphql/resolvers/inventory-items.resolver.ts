@@ -119,7 +119,7 @@ export class InventoryItemsResolver {
       query = query.eq('is_active', isActive);
     }
     
-    const { data, error } = await query.order('name');
+    const { data, error } = await query.order('name') as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch inventory items: ${error.message}`);
@@ -158,7 +158,7 @@ export class InventoryItemsResolver {
       .from('inventory_items')
       .select('*')
       .eq('id', id)
-      .single();
+      .single() as { data: any; error: any };
     
     if (error) {
       if (error.code === 'PGRST116') {
@@ -169,19 +169,19 @@ export class InventoryItemsResolver {
     
     return data ? {
       ...data,
-      unitOfMeasure: data.unit_of_measure,
-      currentQuantity: data.current_quantity,
-      minimumQuantity: data.minimum_quantity,
-      maximumQuantity: data.maximum_quantity,
-      expirationDate: data.expiration_date,
-      purchaseDate: data.purchase_date,
-      costPerUnit: data.cost_per_unit,
-      storageLocation: data.storage_location,
-      isActive: data.is_active,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      createdBy: data.created_by,
-      updatedBy: data.updated_by,
+      unitOfMeasure: (data as any).unit_of_measure,
+      currentQuantity: (data as any).current_quantity,
+      minimumQuantity: (data as any).minimum_quantity,
+      maximumQuantity: (data as any).maximum_quantity,
+      expirationDate: (data as any).expiration_date,
+      purchaseDate: (data as any).purchase_date,
+      costPerUnit: (data as any).cost_per_unit,
+      storageLocation: (data as any).storage_location,
+      isActive: (data as any).is_active,
+      createdAt: (data as any).created_at,
+      updatedAt: (data as any).updated_at,
+      createdBy: (data as any).created_by,
+      updatedBy: (data as any).updated_by,
     } : null;
   }
 
@@ -204,7 +204,7 @@ export class InventoryItemsResolver {
       throw new Error(`Failed to fetch inventory items by category: ${error.message}`);
     }
     
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
       currentQuantity: item.current_quantity,
@@ -291,7 +291,7 @@ export class InventoryItemsResolver {
         updated_by: user.id,
       })
       .select()
-      .single();
+      .single() as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to create inventory item: ${error.message}`);
@@ -299,19 +299,19 @@ export class InventoryItemsResolver {
 
     return {
       ...data,
-      unitOfMeasure: data.unit_of_measure,
-      currentQuantity: data.current_quantity,
-      minimumQuantity: data.minimum_quantity,
-      maximumQuantity: data.maximum_quantity,
-      expirationDate: data.expiration_date,
-      purchaseDate: data.purchase_date,
-      costPerUnit: data.cost_per_unit,
-      storageLocation: data.storage_location,
-      isActive: data.is_active,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      createdBy: data.created_by,
-      updatedBy: data.updated_by,
+      unitOfMeasure: (data as any).unit_of_measure,
+      currentQuantity: (data as any).current_quantity,
+      minimumQuantity: (data as any).minimum_quantity,
+      maximumQuantity: (data as any).maximum_quantity,
+      expirationDate: (data as any).expiration_date,
+      purchaseDate: (data as any).purchase_date,
+      costPerUnit: (data as any).cost_per_unit,
+      storageLocation: (data as any).storage_location,
+      isActive: (data as any).is_active,
+      createdAt: (data as any).created_at,
+      updatedAt: (data as any).updated_at,
+      createdBy: (data as any).created_by,
+      updatedBy: (data as any).updated_by,
     };
   }
 
@@ -347,7 +347,7 @@ export class InventoryItemsResolver {
       .update(updateData)
       .eq('id', input.id)
       .select()
-      .single();
+      .single() as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to update inventory item: ${error.message}`);
@@ -355,19 +355,19 @@ export class InventoryItemsResolver {
 
     return {
       ...data,
-      unitOfMeasure: data.unit_of_measure,
-      currentQuantity: data.current_quantity,
-      minimumQuantity: data.minimum_quantity,
-      maximumQuantity: data.maximum_quantity,
-      expirationDate: data.expiration_date,
-      purchaseDate: data.purchase_date,
-      costPerUnit: data.cost_per_unit,
-      storageLocation: data.storage_location,
-      isActive: data.is_active,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      createdBy: data.created_by,
-      updatedBy: data.updated_by,
+      unitOfMeasure: (data as any).unit_of_measure,
+      currentQuantity: (data as any).current_quantity,
+      minimumQuantity: (data as any).minimum_quantity,
+      maximumQuantity: (data as any).maximum_quantity,
+      expirationDate: (data as any).expiration_date,
+      purchaseDate: (data as any).purchase_date,
+      costPerUnit: (data as any).cost_per_unit,
+      storageLocation: (data as any).storage_location,
+      isActive: (data as any).is_active,
+      createdAt: (data as any).created_at,
+      updatedAt: (data as any).updated_at,
+      createdBy: (data as any).created_by,
+      updatedBy: (data as any).updated_by,
     };
   }
 
@@ -415,13 +415,13 @@ export class InventoryItemsResolver {
       query = query.eq('is_active', isActive);
     }
     
-    const { data, error } = await query.order('name');
+    const { data, error } = await query.order('name') as { data: any; error: any };
     
     if (error) {
       throw new Error(`Failed to fetch my inventory items: ${error.message}`);
     }
     
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
       currentQuantity: item.current_quantity,
@@ -462,7 +462,7 @@ export class InventoryItemsResolver {
       throw new Error(`Failed to fetch recently updated items: ${error.message}`);
     }
     
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
       currentQuantity: item.current_quantity,

@@ -64,7 +64,6 @@ type InventoryItem {
   costPerUnit: Float
   createdAt: DateTime!
   createdBy: ID
-  creator: AuthUser
   currentQuantity: Float!
   description: String
   expirationDate: DateTime
@@ -78,7 +77,6 @@ type InventoryItem {
   unitOfMeasure: String!
   updatedAt: DateTime!
   updatedBy: ID
-  updater: AuthUser
 }
 
 type ItemPrice {
@@ -155,7 +153,6 @@ input RegisterInput {
 type ShoppingListItem {
   createdAt: DateTime!
   createdBy: ID
-  creator: AuthUser
   id: ID!
   inventoryItem: InventoryItem
   inventoryItemId: ID!
@@ -164,25 +161,21 @@ type ShoppingListItem {
   priority: Int!
   purchasedAt: DateTime
   purchasedBy: ID
-  purchaser: AuthUser
   quantityNeeded: Float!
   updatedAt: DateTime!
   updatedBy: ID
-  updater: AuthUser
 }
 
 type Store {
   address: String
   createdAt: String!
   createdBy: ID
-  creator: AuthUser
   id: ID!
   isActive: Boolean
   name: String!
   phone: String
   updatedAt: String!
   updatedBy: ID
-  updater: AuthUser
   website: String
 }
 
