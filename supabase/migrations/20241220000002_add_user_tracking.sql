@@ -58,3 +58,4 @@ CREATE TRIGGER update_stores_updated_at BEFORE UPDATE ON stores
 
 CREATE TRIGGER update_item_prices_updated_at BEFORE UPDATE ON item_prices
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_and_user_column();
+
