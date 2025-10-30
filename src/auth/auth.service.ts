@@ -1,6 +1,16 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
-import { AuthSession, AuthUser, LoginInput, RegisterInput, RefreshTokenInput } from '../graphql/types/auth.type';
+import {
+  AuthSession,
+  AuthUser,
+  LoginInput,
+  RegisterInput,
+  RefreshTokenInput,
+} from '../graphql/types/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -8,7 +18,7 @@ export class AuthService {
 
   async login(input: LoginInput): Promise<AuthSession> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: input.email,
       password: input.password,
@@ -27,7 +37,7 @@ export class AuthService {
 
   async register(input: RegisterInput): Promise<AuthSession> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase.auth.signUp({
       email: input.email,
       password: input.password,
@@ -59,7 +69,7 @@ export class AuthService {
 
   async refreshToken(input: RefreshTokenInput): Promise<AuthSession> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase.auth.refreshSession({
       refresh_token: input.refreshToken,
     });
@@ -77,7 +87,7 @@ export class AuthService {
 
   async logout(accessToken: string): Promise<boolean> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -89,8 +99,11 @@ export class AuthService {
 
   async getCurrentUser(accessToken: string): Promise<AuthUser> {
     const supabase = this.supabaseService.getClient();
-    
-    const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(accessToken);
 
     if (error || !user) {
       throw new UnauthorizedException('Invalid token');

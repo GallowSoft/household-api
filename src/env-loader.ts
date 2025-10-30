@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 // Determine which environment file to load
-const envFile = process.env.NODE_ENV === 'development' ? '.env.development' : '.env';
+const envFile =
+  process.env.NODE_ENV === 'development' ? '.env.development' : '.env';
 const envPath = path.resolve(process.cwd(), envFile);
 
 // Load the environment file

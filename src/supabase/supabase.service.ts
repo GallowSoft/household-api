@@ -8,10 +8,13 @@ export class SupabaseService {
 
   constructor() {
     const supabaseUrl = environment.supabase.url;
-    const supabaseKey = environment.supabase.serviceRoleKey || environment.supabase.anonKey;
-    
+    const supabaseKey =
+      environment.supabase.serviceRoleKey || environment.supabase.anonKey;
+
     if (!supabaseKey) {
-      throw new Error('Missing Supabase key. Please set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY in your environment variables.');
+      throw new Error(
+        'Missing Supabase key. Please set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY in your environment variables.',
+      );
     }
 
     this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -25,13 +28,13 @@ export class SupabaseService {
   async query(sql: string, params?: any[]) {
     const { data, error } = await this.supabase.rpc('exec_sql', {
       sql,
-      params: params || []
+      params: params || [],
     });
-    
+
     if (error) {
       throw new Error(`Database query error: ${error.message}`);
     }
-    
+
     return data;
   }
 }

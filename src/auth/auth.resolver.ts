@@ -3,12 +3,12 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SupabaseAuthGuard } from './supabase-auth.guard';
 import { CurrentUser } from './current-user.decorator';
-import { 
-  AuthSession, 
-  AuthUser, 
-  LoginInput, 
-  RegisterInput, 
-  RefreshTokenInput 
+import {
+  AuthSession,
+  AuthUser,
+  LoginInput,
+  RegisterInput,
+  RefreshTokenInput,
 } from '../graphql/types/auth.type';
 import type { User } from '@supabase/supabase-js';
 
@@ -28,7 +28,9 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthSession)
-  async refreshToken(@Args('input') input: RefreshTokenInput): Promise<AuthSession> {
+  async refreshToken(
+    @Args('input') input: RefreshTokenInput,
+  ): Promise<AuthSession> {
     return this.authService.refreshToken(input);
   }
 
@@ -37,7 +39,7 @@ export class AuthResolver {
   async logout(@Context() context: any): Promise<boolean> {
     const authHeader = context.req.headers.authorization;
     const token = authHeader?.replace('Bearer ', '');
-    
+
     if (!token) {
       throw new Error('No token found');
     }

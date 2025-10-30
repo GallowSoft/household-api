@@ -37,11 +37,17 @@ input CreateInventoryItemInput {
   unitOfMeasure: String
 }
 
+input CreateShoppingListInput {
+  name: String!
+  storeId: ID
+}
+
 input CreateShoppingListItemInput {
   inventoryItemId: ID!
   notes: String
   priority: Int
   quantityNeeded: Float!
+  shoppingListId: ID
 }
 
 input CreateStoreInput {
@@ -104,16 +110,20 @@ input MarkPurchasedInput {
 
 type Mutation {
   createInventoryItem(input: CreateInventoryItemInput!): InventoryItem!
+  createShoppingList(input: CreateShoppingListInput!): ShoppingList!
   createShoppingListItem(input: CreateShoppingListItemInput!): ShoppingListItem!
   createStore(input: CreateStoreInput!): Store!
   deleteInventoryItem(id: ID!): Boolean!
+  deleteShoppingList(id: ID!): Boolean!
   deleteShoppingListItem(id: ID!): Boolean!
+  deleteStore(id: ID!): Boolean!
   login(input: LoginInput!): AuthSession!
   logout: Boolean!
   markPurchased(input: MarkPurchasedInput!): ShoppingListItem!
   refreshToken(input: RefreshTokenInput!): AuthSession!
   register(input: RegisterInput!): AuthSession!
   updateInventoryItem(input: UpdateInventoryItemInput!): InventoryItem!
+  updateShoppingList(input: UpdateShoppingListInput!): ShoppingList!
   updateShoppingListItem(input: UpdateShoppingListItemInput!): ShoppingListItem!
 }
 
@@ -134,8 +144,10 @@ type Query {
   myShoppingList(isPurchased: Boolean): [ShoppingListItem!]!
   recentlyAddedItems(limit: Float = 10): [ShoppingListItem!]!
   recentlyUpdatedItems(limit: Float = 10): [InventoryItem!]!
-  shoppingList(isPurchased: Boolean, priority: Float): [ShoppingListItem!]!
+  shoppingList(isPurchased: Boolean, priority: Float, shoppingListId: ID): [ShoppingListItem!]!
+  shoppingListById(id: ID!): ShoppingList
   shoppingListItem(id: ID!): ShoppingListItem
+  shoppingLists(storeId: ID): [ShoppingList!]!
   store(id: ID!): Store
   stores(isActive: Boolean): [Store!]!
 }
@@ -150,6 +162,21 @@ input RegisterInput {
   phone: String
 }
 
+type ShoppingList {
+  createdAt: DateTime!
+  createdBy: ID
+  id: ID!
+  items: [ShoppingListItem!]
+
+  """Total items in this list"""
+  itemsCount: Float
+  name: String!
+  store: Store
+  storeId: ID
+  updatedAt: DateTime!
+  updatedBy: ID
+}
+
 type ShoppingListItem {
   createdAt: DateTime!
   createdBy: ID
@@ -162,6 +189,8 @@ type ShoppingListItem {
   purchasedAt: DateTime
   purchasedBy: ID
   quantityNeeded: Float!
+  shoppingList: ShoppingList
+  shoppingListId: ID
   updatedAt: DateTime!
   updatedBy: ID
 }
@@ -195,6 +224,12 @@ input UpdateInventoryItemInput {
   purchaseDate: DateTime
   storageLocation: String
   unitOfMeasure: String
+}
+
+input UpdateShoppingListInput {
+  id: ID!
+  name: String
+  storeId: ID
 }
 
 input UpdateShoppingListItemInput {

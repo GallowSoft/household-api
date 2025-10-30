@@ -133,4 +133,46 @@ export class StoresResolver {
       updatedBy: data.updated_by,
     };
   }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SupabaseAuthGuard)
+  async deleteStore(
+    @Args('id', { type: () => ID }) id: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    const supabase = this.supabaseService.getClient();
+
+    const { data, error } = await supabase
+      .from('stores')
+      .update({
+        is_active: false,
+        updated_by: user.id,
+      })
+      .eq('id', id)
+      .select('*')
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Failed to delete store: ${error.message}`);
+    }
+
+    // If no row was returned (e.g., PostgREST didn't return the row), verify state
+    if (!data) {
+      const { data: check, error: checkError } = await supabase
+        .from('stores')
+        .select('is_active')
+        .eq('id', id)
+        .limit(1)
+        .maybeSingle();
+
+      if (checkError) {
+        throw new Error(`Failed to verify store state: ${checkError.message}`);
+      }
+
+      return check ? check.is_active === false : false;
+    }
+
+    return data.is_active === false;
+  }
 }

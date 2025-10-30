@@ -31,5 +31,4 @@ export class Store {
 
   @Field(() => ID, { nullable: true })
   updatedBy?: string;
-
 }

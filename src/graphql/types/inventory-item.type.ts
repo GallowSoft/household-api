@@ -58,5 +58,4 @@ export class InventoryItem {
 
   @Field(() => ID, { nullable: true })
   updatedBy?: string;
-
 }

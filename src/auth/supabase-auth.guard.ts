@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { SupabaseService } from '../supabase/supabase.service';
 
@@ -12,14 +17,14 @@ export class SupabaseAuthGuard implements CanActivate {
 
     // Extract the authorization header
     const authHeader = request.headers.authorization;
-    
+
     if (!authHeader) {
       throw new UnauthorizedException('No authorization header found');
     }
 
     // Extract the token from "Bearer <token>"
     const token = authHeader.replace('Bearer ', '');
-    
+
     if (!token) {
       throw new UnauthorizedException('No token found in authorization header');
     }
@@ -27,7 +32,10 @@ export class SupabaseAuthGuard implements CanActivate {
     try {
       // Verify the JWT token with Supabase
       const supabase = this.supabaseService.getClient();
-      const { data: { user }, error } = await supabase.auth.getUser(token);
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser(token);
 
       if (error || !user) {
         throw new UnauthorizedException('Invalid or expired token');
@@ -35,7 +43,7 @@ export class SupabaseAuthGuard implements CanActivate {
 
       // Attach the user to the request context
       request.user = user;
-      
+
       return true;
     } catch (error) {
       throw new UnauthorizedException('Authentication failed');

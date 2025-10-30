@@ -1,4 +1,13 @@
-import { Resolver, Query, Args, ID, Float, Mutation, InputType, Field } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  ID,
+  Float,
+  Mutation,
+  InputType,
+  Field,
+} from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { InventoryItem } from '../types';
@@ -108,31 +117,36 @@ export class InventoryItemsResolver {
     @Args('lowStock', { nullable: true }) lowStock?: boolean,
   ): Promise<InventoryItem[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     let query = supabase.from('inventory_items').select('*');
-    
+
     if (category) {
       query = query.eq('category', category);
     }
-    
+
     if (isActive !== undefined) {
       query = query.eq('is_active', isActive);
     }
-    
-    const { data, error } = await query.order('name') as { data: any; error: any };
-    
+
+    const { data, error } = (await query.order('name')) as {
+      data: any;
+      error: any;
+    };
+
     if (error) {
       throw new Error(`Failed to fetch inventory items: ${error.message}`);
     }
-    
+
     let result = data || [];
-    
+
     // Filter low stock items in application layer if requested
     if (lowStock) {
-      result = result.filter(item => item.current_quantity < item.minimum_quantity);
+      result = result.filter(
+        (item) => item.current_quantity < item.minimum_quantity,
+      );
     }
-    
-    return result.map(item => ({
+
+    return result.map((item) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
       currentQuantity: item.current_quantity,
@@ -151,59 +165,69 @@ export class InventoryItemsResolver {
   }
 
   @Query(() => InventoryItem, { nullable: true })
-  async inventoryItem(@Args('id', { type: () => ID }) id: string): Promise<InventoryItem | null> {
+  async inventoryItem(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<InventoryItem | null> {
     const supabase = this.supabaseService.getClient();
-    
-    const { data, error } = await supabase
+
+    const { data, error } = (await supabase
       .from('inventory_items')
       .select('*')
       .eq('id', id)
-      .single() as { data: any; error: any };
-    
+      .single()) as { data: any; error: any };
+
     if (error) {
       if (error.code === 'PGRST116') {
         return null; // Not found
       }
       throw new Error(`Failed to fetch inventory item: ${error.message}`);
     }
-    
-    return data ? {
-      ...data,
-      unitOfMeasure: (data as any).unit_of_measure,
-      currentQuantity: (data as any).current_quantity,
-      minimumQuantity: (data as any).minimum_quantity,
-      maximumQuantity: (data as any).maximum_quantity,
-      expirationDate: (data as any).expiration_date,
-      purchaseDate: (data as any).purchase_date,
-      costPerUnit: (data as any).cost_per_unit,
-      storageLocation: (data as any).storage_location,
-      isActive: (data as any).is_active,
-      createdAt: (data as any).created_at,
-      updatedAt: (data as any).updated_at,
-      createdBy: (data as any).created_by,
-      updatedBy: (data as any).updated_by,
-    } : null;
+
+    return data
+      ? {
+          ...data,
+          unitOfMeasure: (data as any).unit_of_measure,
+          currentQuantity: (data as any).current_quantity,
+          minimumQuantity: (data as any).minimum_quantity,
+          maximumQuantity: (data as any).maximum_quantity,
+          expirationDate: (data as any).expiration_date,
+          purchaseDate: (data as any).purchase_date,
+          costPerUnit: (data as any).cost_per_unit,
+          storageLocation: (data as any).storage_location,
+          isActive: (data as any).is_active,
+          createdAt: (data as any).created_at,
+          updatedAt: (data as any).updated_at,
+          createdBy: (data as any).created_by,
+          updatedBy: (data as any).updated_by,
+        }
+      : null;
   }
 
   @Query(() => [InventoryItem])
-  async inventoryItemsByCategory(@Args('category') category: string): Promise<InventoryItem[]> {
+  async inventoryItemsByCategory(
+    @Args('category') category: string,
+  ): Promise<InventoryItem[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         creator:created_by(id, email),
         updater:updated_by(id, email)
-      `)
+      `,
+      )
       .eq('category', category)
       .eq('is_active', true)
       .order('name');
-    
+
     if (error) {
-      throw new Error(`Failed to fetch inventory items by category: ${error.message}`);
+      throw new Error(
+        `Failed to fetch inventory items by category: ${error.message}`,
+      );
     }
-    
+
     return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
@@ -225,26 +249,30 @@ export class InventoryItemsResolver {
   @Query(() => [InventoryItem])
   async lowStockItems(): Promise<InventoryItem[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         creator:created_by(id, email),
         updater:updated_by(id, email)
-      `)
+      `,
+      )
       .eq('is_active', true)
       .order('category', { ascending: true })
       .order('name', { ascending: true });
-    
+
     if (error) {
       throw new Error(`Failed to fetch low stock items: ${error.message}`);
     }
-    
+
     // Filter for low stock items in application layer
-    const lowStockItems = (data || []).filter(item => item.current_quantity < item.minimum_quantity);
-    
-    return lowStockItems.map(item => ({
+    const lowStockItems = (data || []).filter(
+      (item) => item.current_quantity < item.minimum_quantity,
+    );
+
+    return lowStockItems.map((item) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
       currentQuantity: item.current_quantity,
@@ -270,7 +298,7 @@ export class InventoryItemsResolver {
   ): Promise<InventoryItem> {
     const supabase = this.supabaseService.getClient();
 
-    const { data, error } = await supabase
+    const { data, error } = (await supabase
       .from('inventory_items')
       .insert({
         name: input.name,
@@ -291,7 +319,7 @@ export class InventoryItemsResolver {
         updated_by: user.id,
       })
       .select()
-      .single() as { data: any; error: any };
+      .single()) as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to create inventory item: ${error.message}`);
@@ -328,26 +356,35 @@ export class InventoryItemsResolver {
     };
 
     if (input.name !== undefined) updateData.name = input.name;
-    if (input.description !== undefined) updateData.description = input.description;
+    if (input.description !== undefined)
+      updateData.description = input.description;
     if (input.category !== undefined) updateData.category = input.category;
     if (input.brand !== undefined) updateData.brand = input.brand;
     if (input.barcode !== undefined) updateData.barcode = input.barcode;
-    if (input.unitOfMeasure !== undefined) updateData.unit_of_measure = input.unitOfMeasure;
-    if (input.currentQuantity !== undefined) updateData.current_quantity = input.currentQuantity;
-    if (input.minimumQuantity !== undefined) updateData.minimum_quantity = input.minimumQuantity;
-    if (input.maximumQuantity !== undefined) updateData.maximum_quantity = input.maximumQuantity;
-    if (input.expirationDate !== undefined) updateData.expiration_date = input.expirationDate;
-    if (input.purchaseDate !== undefined) updateData.purchase_date = input.purchaseDate;
-    if (input.costPerUnit !== undefined) updateData.cost_per_unit = input.costPerUnit;
-    if (input.storageLocation !== undefined) updateData.storage_location = input.storageLocation;
+    if (input.unitOfMeasure !== undefined)
+      updateData.unit_of_measure = input.unitOfMeasure;
+    if (input.currentQuantity !== undefined)
+      updateData.current_quantity = input.currentQuantity;
+    if (input.minimumQuantity !== undefined)
+      updateData.minimum_quantity = input.minimumQuantity;
+    if (input.maximumQuantity !== undefined)
+      updateData.maximum_quantity = input.maximumQuantity;
+    if (input.expirationDate !== undefined)
+      updateData.expiration_date = input.expirationDate;
+    if (input.purchaseDate !== undefined)
+      updateData.purchase_date = input.purchaseDate;
+    if (input.costPerUnit !== undefined)
+      updateData.cost_per_unit = input.costPerUnit;
+    if (input.storageLocation !== undefined)
+      updateData.storage_location = input.storageLocation;
     if (input.isActive !== undefined) updateData.is_active = input.isActive;
 
-    const { data, error } = await supabase
+    const { data, error } = (await supabase
       .from('inventory_items')
       .update(updateData)
       .eq('id', input.id)
       .select()
-      .single() as { data: any; error: any };
+      .single()) as { data: any; error: any };
 
     if (error) {
       throw new Error(`Failed to update inventory item: ${error.message}`);
@@ -381,7 +418,7 @@ export class InventoryItemsResolver {
 
     const { error } = await supabase
       .from('inventory_items')
-      .update({ 
+      .update({
         is_active: false,
         updated_by: user.id,
       })
@@ -402,25 +439,33 @@ export class InventoryItemsResolver {
     @Args('isActive', { nullable: true }) isActive?: boolean,
   ): Promise<InventoryItem[]> {
     const supabase = this.supabaseService.getClient();
-    
-    let query = supabase.from('inventory_items').select(`
+
+    let query = supabase
+      .from('inventory_items')
+      .select(
+        `
       *,
-    `).eq('created_by', user.id);
-    
+    `,
+      )
+      .eq('created_by', user.id);
+
     if (category) {
       query = query.eq('category', category);
     }
-    
+
     if (isActive !== undefined) {
       query = query.eq('is_active', isActive);
     }
-    
-    const { data, error } = await query.order('name') as { data: any; error: any };
-    
+
+    const { data, error } = (await query.order('name')) as {
+      data: any;
+      error: any;
+    };
+
     if (error) {
       throw new Error(`Failed to fetch my inventory items: ${error.message}`);
     }
-    
+
     return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,
@@ -446,22 +491,26 @@ export class InventoryItemsResolver {
     @Args('limit', { nullable: true, defaultValue: 10 }) limit?: number,
   ): Promise<InventoryItem[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('inventory_items')
-      .select(`
+      .select(
+        `
         *,
         creator:created_by(id, email),
         updater:updated_by(id, email)
-      `)
+      `,
+      )
       .eq('updated_by', user.id)
       .order('updated_at', { ascending: false })
       .limit(limit || 10);
-    
+
     if (error) {
-      throw new Error(`Failed to fetch recently updated items: ${error.message}`);
+      throw new Error(
+        `Failed to fetch recently updated items: ${error.message}`,
+      );
     }
-    
+
     return (data || []).map((item: any) => ({
       ...item,
       unitOfMeasure: item.unit_of_measure,

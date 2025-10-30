@@ -1,9 +1,10 @@
 // Environment configuration
-const isLocal = process.env.NODE_ENV === 'local' || process.env.USE_LOCAL_SUPABASE === 'true';
+const isLocal =
+  process.env.NODE_ENV === 'local' || process.env.USE_LOCAL_SUPABASE === 'true';
 
 export const environment = {
   supabase: {
-    url: isLocal 
+    url: isLocal
       ? 'http://localhost:54321'
       : process.env.SUPABASE_URL || 'https://wrdcxzxuztcsonulcbkm.supabase.co',
     anonKey: isLocal
